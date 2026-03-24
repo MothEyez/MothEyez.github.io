@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -930,6 +930,12 @@
       Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
     }, 800);
   });
+  // Fallback: if DOMContentLoaded already fired, run directly
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(() => {
+      Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
+    }, 800);
+  }
 
   // ── Form submit handler ──
   function handleFormSubmit(btn) {
@@ -941,4 +947,4 @@
     // Replace this with a real form service (e.g. Formspree, EmailJS)
     btn.textContent = 'Message Sent ✓';
     btn.style.background = '#c8960a';
-    btn.disabled = 
+    btn.disabled =
