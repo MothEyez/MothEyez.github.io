@@ -1,3 +1,4 @@
+[index(1).html](https://github.com/user-attachments/files/26197782/index.1.html)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -906,27 +907,30 @@
   // ── Counting stats animation ──
   const STATS = {
     'stat-hours':  1000,
-    'stat-events': 15,
-    'stat-titles': 8
+    'stat-events': 10,
+    'stat-titles': 9
   };
 
-  function countUp(id, target, duration = 1600) {
+  function countUp(id, target, duration = 2000) {
     const el = document.getElementById(id);
     if (!el) return;
+    el.textContent = '0';
     const start = performance.now();
     const tick = (now) => {
       const t = Math.min((now - start) / duration, 1);
       const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
       el.textContent = Math.round(ease * target);
       if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = target;
     };
     requestAnimationFrame(tick);
   }
 
-  // Run count-up on page load
-  setTimeout(() => {
-    Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
-  }, 400);
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
+    }, 800);
+  });
 
   // ── Form submit handler ──
   function handleFormSubmit(btn) {
@@ -938,4 +942,4 @@
     // Replace this with a real form service (e.g. Formspree, EmailJS)
     btn.textContent = 'Message Sent ✓';
     btn.style.background = '#c8960a';
-    btn.disabled =
+    btn.disabled = 
