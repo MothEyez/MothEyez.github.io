@@ -925,16 +925,18 @@
     requestAnimationFrame(tick);
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
-    }, 800);
-  });
-  // Fallback: if DOMContentLoaded already fired, run directly
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setTimeout(() => {
-      Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
-    }, 800);
+  let statsDone = false;
+  const statsRow = document.getElementById('stats-row');
+  if (statsRow) {
+    new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !statsDone) {
+          statsDone = true;
+          Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
+          obs.disconnect();
+        }
+      });
+    }, { threshold: 0.2 }).observe(statsRow);
   }
 
   // ── Form submit handler ──
