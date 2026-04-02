@@ -1,3 +1,5 @@
+
+[index(2).html](https://github.com/user-attachments/files/26446526/index.2.html)
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -902,7 +904,7 @@
   <div class="footer-copy">© 2025 Mathias Talbot &nbsp;·&nbsp; Esports Broadcaster</div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // ── Counting stats animation ──
   const STATS = {
     'stat-hours':  1000,
@@ -947,4 +949,4 @@
     // Replace this with a real form service (e.g. Formspree, EmailJS)
     btn.textContent = 'Message Sent ✓';
     btn.style.background = '#c8960a';
-    btn.disabled =
+    btn.disabled = 
