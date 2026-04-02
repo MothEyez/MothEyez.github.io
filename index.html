@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mathias "MothEyez" Talbot — Esports Broadcaster</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #0d0808;
+      --bg2:      #150e0e;
+      --accent:   #e02020;
+      --accent2:  #f5c842;
+      --gold:     #f5c842;
+      --text:     #e8d8d0;
+      --muted:    #6b4a4a;
+      --border:   rgba(224,32,32,0.18);
+      --glow:     0 0 24px rgba(224,32,32,0.4);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(8,12,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: padding 0.3s;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-shadow: var(--glow);
+    }
+    .nav-logo span { color: var(--text); }
+    .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-links a {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.25s, text-shadow 0.25s;
+    }
+    .nav-links a:hover {
+      color: var(--accent);
+      text-shadow: var(--glow);
+    }
+
+    /* ── HERO ── */
+    #home {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 120px 48px 60px;
+      text-align: center;
+    }
+
+    .hero-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(224,32,32,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(224,32,32,0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+    }
+
+    .hero-glow-orb {
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(224,32,32,0.08) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero-eyemark {
+      position: absolute;
+      width: 340px; height: 340px;
+      border-radius: 50%;
+      border: 1px solid rgba(224,32,32,0.1);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -60%);
+      animation: pulse-ring 4s ease-in-out infinite;
+    }
+    .hero-eyemark::after {
+      content: '';
+      position: absolute; inset: 24px;
+      border-radius: 50%;
+      border: 1px solid rgba(224,32,32,0.06);
+      animation: pulse-ring 4s ease-in-out 0.5s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.04); }
+    }
+
+    /* photo container */
+    .hero-photo-wrap {
+      position: relative;
+      width: 200px; height: 200px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-photo-wrap::before {
+      content: '';
+      position: absolute; inset: -3px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 18px rgba(224,32,32,0.55);
+      z-index: 0;
+    }
+    .hero-photo-wrap::after { display: none; }
+
+    .hero-photo-inner {
+      position: relative; z-index: 1;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 3px solid var(--bg);
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-photo-inner svg {
+      width: 120px; height: 120px;
+      opacity: 0.25;
+    }
+    /* If user adds a real photo: .hero-photo-inner img { width:100%; height:100%; object-fit:cover; } */
+
+    .hero-alias {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      text-shadow: var(--glow);
+      margin-bottom: 8px;
+      animation: fadeUp 0.8s ease 0.1s both;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 8rem);
+      letter-spacing: 0.04em;
+      line-height: 0.9;
+      color: #fff;
+      animation: fadeUp 0.8s ease 0.2s both;
+    }
+    h1 .accent { color: var(--accent); text-shadow: var(--glow); }
+
+    .hero-role {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 500;
+      font-size: 1.15rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 12px;
+      animation: fadeUp 0.8s ease 0.3s both;
+    }
+
+    .hero-ctas {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+      margin-top: 40px;
+      animation: fadeUp 0.8s ease 0.45s both;
+    }
+
+    .btn {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: 4px;
+      transition: all 0.25s;
+      cursor: pointer;
+      border: none;
+      display: inline-block;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: #000;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 32px rgba(245,200,66,0.5);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .btn-outline:hover {
+      background: rgba(0,229,255,0.08);
+      box-shadow: var(--glow);
+      transform: translateY(-2px);
+    }
+
+    /* scroll indicator */
+    .scroll-hint {
+      position: absolute; bottom: 36px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      animation: fadeUp 1s ease 0.8s both;
+    }
+    .scroll-hint span {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scroll-drop 2s ease-in-out infinite;
+    }
+    @keyframes scroll-drop {
+      0% { opacity: 0; transform: scaleY(0); transform-origin: top; }
+      50% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+      100% { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
+    }
+
+    /* ── SECTION SHARED ── */
+    section {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      letter-spacing: 0.04em;
+      color: #fff;
+      margin-bottom: 40px;
+      line-height: 1;
+    }
+    .section-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, var(--accent), transparent);
+      margin: 0;
+    }
+
+    /* ── REEL SECTION ── */
+    #reel { max-width: 1200px; }
+
+    .reel-container {
+      position: relative;
+      animation: cardReveal 0.8s ease 0.1s both;
+    }
+
+    .video-frame {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .video-frame::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(224,32,32,0.05), transparent 60%);
+      z-index: 1; pointer-events: none; border-radius: 6px;
+    }
+    /* Corner accents */
+    .corner { position: absolute; width: 20px; height: 20px; z-index: 2; }
+    .corner-tl { top: -2px; left: -2px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+    .corner-tr { top: -2px; right: -2px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+    .corner-bl { bottom: -2px; left: -2px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+    .corner-br { bottom: -2px; right: -2px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 16px;
+      color: var(--muted);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .play-btn {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: var(--glow);
+    }
+    .play-btn:hover { background: rgba(0,229,255,0.1); transform: scale(1.1); }
+    .play-btn svg { fill: var(--accent); width: 28px; height: 28px; margin-left: 4px; }
+
+    .video-placeholder p {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    /* Replace placeholder with real iframe by uncommenting below */
+    /* .video-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; } */
+
+    /* scrolling ticker below reel */
+    .ticker-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      margin-top: 32px;
+      background: var(--bg2);
+    }
+    .ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    .ticker-item {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 40px;
+    }
+    .ticker-item span { color: var(--accent); margin-right: 12px; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── GAMES GRID ── */
+    .games-grid {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-top: 28px;
+    }
+    .game-tag {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text);
+      background: var(--bg2);
+      transition: all 0.25s;
+    }
+    .game-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    /* ── EVENTS SECTION ── */
+    #events { background: none; }
+
+    .events-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+    @media (max-width: 700px) { .events-grid { grid-template-columns: 1fr; } }
+
+    .event-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 24px 28px;
+      position: relative;
+      overflow: hidden;
+      animation: cardReveal 0.6s ease both;
+      transition: border-color 0.25s;
+    }
+    .event-card:nth-child(1) { animation-delay: 0.1s; }
+    .event-card:nth-child(2) { animation-delay: 0.2s; }
+    .event-card:nth-child(3) { animation-delay: 0.3s; }
+    .event-card:nth-child(4) { animation-delay: 0.4s; }
+    @keyframes cardReveal {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .event-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, var(--accent), transparent);
+    }
+
+    .event-role {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .event-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .event-org {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin: 60px 0;
+      text-align: center;
+    }
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 36px 24px;
+      animation: cardReveal 0.6s ease both;
+    }
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: var(--accent);
+      text-shadow: var(--glow);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* Orgs strip */
+    .orgs-label {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .orgs-strip {
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
+    }
+    .org-badge {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 22px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      color: var(--text);
+      text-transform: uppercase;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .org-badge:hover { border-color: var(--accent); color: var(--accent); }
+    .org-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    /* ── CONTACT SECTION ── */
+    #contact {
+      max-width: 1200px;
+      padding-bottom: 140px;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    @media (max-width: 700px) { .contact-grid { grid-template-columns: 1fr; } }
+
+    .contact-text p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      max-width: 460px;
+      margin-bottom: 32px;
+    }
+
+    .socials-list { display: flex; flex-direction: column; gap: 12px; }
+    .social-link {
+      display: flex; align-items: center; gap: 14px;
+      text-decoration: none;
+      padding: 14px 20px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg2);
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+      color: var(--text);
+    }
+    .social-link:hover {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      transform: translateX(4px);
+    }
+    .social-icon {
+      width: 20px; height: 20px;
+      fill: var(--accent);
+      flex-shrink: 0;
+    }
+    .social-name {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .social-handle { font-size: 0.8rem; color: var(--muted); margin-left: auto; }
+
+    /* Email form */
+    .email-form { display: flex; flex-direction: column; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .form-group input,
+    .form-group textarea {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .form-group textarea { min-height: 120px; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+    .footer-copy {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTION FULL-WIDTH WRAPPERS ── */
+    .full-section {
+      width: 100%;
+    }
+
+    /* mobile nav */
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .nav-links { gap: 20px; }
+      section { padding: 70px 20px; }
+      footer { padding: 20px; }
+      h1 { font-size: 3.5rem; }
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">Moth<span>Eyez</span></div>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#reel">Reel</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<div id="home" style="position:relative; overflow:hidden;">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow-orb"></div>
+  <div class="hero-eyemark"></div>
+
+  <section style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; position:relative; z-index:2; text-align:center;">
+
+    <div class="hero-photo-wrap">
+      <div class="hero-photo-inner">
+        <!-- Replace SVG placeholder with: <img src="your-photo.jpg" alt="Mathias Talbot"> -->
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="36" r="22" fill="rgba(224,32,32,0.5)"/>
+          <ellipse cx="50" cy="90" rx="34" ry="26" fill="rgba(224,32,32,0.4)"/>
+        </svg>
+      </div>
+    </div>
+
+    <p class="hero-alias">// MothEyez</p>
+    <h1>Mathias<br><span class="accent">Talbot</span></h1>
+    <p class="hero-role">Esports Broadcaster &nbsp;·&nbsp; Commentator</p>
+
+    <div class="hero-ctas">
+      <a href="#reel" class="btn btn-primary">Watch Demo Reel</a>
+      <a href="#events" class="btn btn-outline">View Events</a>
+      <a href="#contact" class="btn btn-outline">Contact Me</a>
+    </div>
+  </section>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── DEMO REEL ── -->
+<div class="full-section" id="reel" style="background: var(--bg);">
+  <section>
+    <p class="section-label">// 01 — Demo Reel</p>
+    <h2>Watch Me Work</h2>
+
+    <div class="reel-container" id="reel-anim">
+      <div class="video-frame">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <iframe src="https://www.youtube.com/embed/jvVNAw4031k" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:6px;"></iframe>
+      </div>
+    </div>
+
+    <!-- Scrolling quotes ticker -->
+    <div class="ticker-wrap">
+      <div class="ticker-track" id="ticker">
+        <span class="ticker-item"><span>▶</span> "And he CLOSES IT OUT!" </span>
+        <span class="ticker-item"><span>▶</span> Esports Broadcaster</span>
+        <span class="ticker-item"><span>▶</span> Play-by-Play Commentator</span>
+        <span class="ticker-item"><span>▶</span> "What a play, absolutely unreal!" </span>
+        <span class="ticker-item"><span>▶</span> St. Clair College Esports</span>
+        <span class="ticker-item"><span>▶</span> Color Commentary</span>
+        <span class="ticker-item"><span>▶</span> "THEY'RE RUSHING B — NO WAIT—" </span>
+        <span class="ticker-item"><span>▶</span> Tournament Broadcasting</span>
+        <span class="ticker-item"><span>▶</span> Live Event Coverage</span>
+        <!-- duplicate for seamless loop -->
+        <span class="ticker-item"><span>▶</span> "And he CLOSES IT OUT!" </span>
+        <span class="ticker-item"><span>▶</span> Esports Broadcaster</span>
+        <span class="ticker-item"><span>▶</span> Play-by-Play Commentator</span>
+        <span class="ticker-item"><span>▶</span> "What a play, absolutely unreal!" </span>
+        <span class="ticker-item"><span>▶</span> St. Clair College Esports</span>
+        <span class="ticker-item"><span>▶</span> Color Commentary</span>
+        <span class="ticker-item"><span>▶</span> "THEY'RE RUSHING B — NO WAIT—" </span>
+        <span class="ticker-item"><span>▶</span> Tournament Broadcasting</span>
+        <span class="ticker-item"><span>▶</span> Live Event Coverage</span>
+      </div>
+    </div>
+
+    <!-- Titles / Games -->
+    <p class="section-label" style="margin-top:48px;">// Titles I Cast</p>
+    <div class="games-grid">
+      <div class="game-tag">Valorant</div>
+      <div class="game-tag">League of Legends</div>
+      <div class="game-tag">CS2</div>
+      <div class="game-tag">Rocket League</div>
+      <div class="game-tag">Overwatch 2</div>
+      <div class="game-tag">Apex Legends</div>
+      <div class="game-tag">Super Smash Bros.</div>
+      <div class="game-tag">Call of Duty</div>
+    </div>
+    <!-- ↑ Edit / add your actual titles above -->
+
+  </section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── EVENTS ── -->
+<div class="full-section" id="events" style="background: var(--bg);">
+  <section>
+    <p class="section-label">// 02 — Events & Experience</p>
+    <h2>Events Worked</h2>
+
+    <div class="events-grid" id="events-grid">
+
+      <div class="event-card">
+        <div class="event-role">Play-by-Play Caster</div>
+        <div class="event-name">St. Clair College Esports Championship</div>
+        <div class="event-org">St. Clair College &nbsp;·&nbsp; Windsor, ON</div>
+      </div>
+
+      <div class="event-card">
+        <div class="event-role">Color Commentator</div>
+        <div class="event-name">OCAA Esports Invitational</div>
+        <div class="event-org">Ontario Colleges &nbsp;·&nbsp; Ontario, CA</div>
+      </div>
+
+      <div class="event-card">
+        <div class="event-role">Broadcast Producer</div>
+        <div class="event-name">Inter-College Valorant Series</div>
+        <div class="event-org">St. Clair College &nbsp;·&nbsp; Windsor, ON</div>
+      </div>
+
+      <div class="event-card">
+        <div class="event-role">Play-by-Play Caster</div>
+        <div class="event-name">Weekend Collegiate Showdown</div>
+        <div class="event-org">Collegiate Circuit &nbsp;·&nbsp; Ontario, CA</div>
+      </div>
+
+      <!-- Add more event cards here -->
+
+    </div>
+    <!-- ↑ Replace the above cards with your actual events and roles -->
+
+    <!-- Stats -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-hours">0</div>
+        <div class="stat-label">Broadcast Hours +</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-events">0</div>
+        <div class="stat-label">Events Worked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-titles">0</div>
+        <div class="stat-label">Titles Cast</div>
+      </div>
+    </div>
+    <!-- ↑ Update target values in the script below -->
+
+    <!-- Organisations -->
+    <p class="orgs-label">Organisations &amp; Teams Worked With</p>
+    <div class="orgs-strip">
+      <div class="org-badge"><div class="org-dot"></div>St. Clair College</div>
+      <div class="org-badge"><div class="org-dot"></div>OCAA</div>
+      <div class="org-badge"><div class="org-dot"></div>Your Org Here</div>
+      <div class="org-badge"><div class="org-dot"></div>Your Org Here</div>
+    </div>
+    <!-- ↑ Replace with your actual organisations -->
+
+  </section>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ── CONTACT ── -->
+<div class="full-section" id="contact" style="background: var(--bg);">
+  <section>
+    <p class="section-label">// 03 — Contact</p>
+    <h2>Let's Work Together</h2>
+
+    <div class="contact-grid">
+
+      <div class="contact-text">
+        <p>
+          I'm Mathias "MothEyez" Talbot — an esports broadcaster and commentator
+          trained at St. Clair College. Whether you need a sharp play-by-play voice,
+          colour commentary, or full broadcast production, I bring the energy and
+          professionalism your event deserves.
+        </p>
+        <p>
+          Based in Windsor, Ontario &amp; available for remote and in-person events.
+          Reach out — let's make something great.
+        </p>
+
+        <div class="socials-list">
+
+          <a href="https://twitter.com/MothEyezz" target="_blank" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span class="social-name">Twitter / X</span>
+            <span class="social-handle">@MothEyezz</span>
+          </a>
+
+          <a href="https://twitch.tv/YourHandle" target="_blank" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"/></svg>
+            <span class="social-name">Twitch</span>
+            <span class="social-handle">@YourHandle</span>
+          </a>
+
+          <a href="https://www.linkedin.com/in/mathias-talbot-957356189/" target="_blank" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <span class="social-name">LinkedIn</span>
+            <span class="social-handle">Mathias Talbot</span>
+          </a>
+
+          <a href="/cdn-cgi/l/email-protection#add4c2d8dfedc8c0ccc4c183cec2c0" class="social-link">
+            <svg class="social-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            <span class="social-name">Email</span>
+            <span class="social-handle"><span class="__cf_email__" data-cfemail="cbb2a4beb98baea6aaa2a7e5a8a4a6">[email&#160;protected]</span></span>
+          </a>
+
+        </div>
+        <!-- ↑ Replace all handles and links above with your real ones -->
+      </div>
+
+      <!-- Quick email form -->
+      <div>
+        <p class="section-label" style="margin-bottom:20px;">// Quick Message</p>
+        <div class="email-form">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" placeholder="John Smith">
+          </div>
+          <div class="form-group">
+            <label>Your Email</label>
+            <input type="email" placeholder="john@example.com">
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea placeholder="Tell me about your event or opportunity..."></textarea>
+          </div>
+          <button class="btn btn-primary" style="align-self:flex-start;" onclick="handleFormSubmit(this)">Send Message</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">MothEyez</div>
+  <div class="footer-copy">© 2025 Mathias Talbot &nbsp;·&nbsp; Esports Broadcaster</div>
+</footer>
+
+<script>
+  // ── Counting stats animation ──
+  const STATS = {
+    'stat-hours':  1000,
+    'stat-events': 10,
+    'stat-titles': 9
+  };
+
+  function countUp(id, target, duration = 2000) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = '0';
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      el.textContent = Math.round(ease * target);
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(tick);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+      Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
+    }, 800);
+  });
+  // Fallback: if DOMContentLoaded already fired, run directly
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(() => {
+      Object.entries(STATS).forEach(([id, val]) => countUp(id, val));
+    }, 800);
+  }
+
+  // ── Form submit handler ──
+  function handleFormSubmit(btn) {
+    const form = btn.closest('.email-form');
+    const name = form.querySelector('input[type=text]').value.trim();
+    const email = form.querySelector('input[type=email]').value.trim();
+    const msg = form.querySelector('textarea').value.trim();
+    if (!name || !email || !msg) { alert('Please fill in all fields.'); return; }
+    // Replace this with a real form service (e.g. Formspree, EmailJS)
+    btn.textContent = 'Message Sent ✓';
+    btn.style.background = '#c8960a';
+    btn.disabled =
