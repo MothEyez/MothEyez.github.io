@@ -943,4 +943,14 @@
     // Replace this with a real form service (e.g. Formspree, EmailJS)
     btn.textContent = 'Message Sent ✓';
     btn.style.background = '#c8960a';
-    btn.disabled =
+    btn.disabled = true;
+  }
+
+  // ── Nav shrink on scroll ──
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.padding =
+      window.scrollY > 50 ? '12px 48px' : '18px 48px';
+  });
+</script>
+</body>
+</html>
